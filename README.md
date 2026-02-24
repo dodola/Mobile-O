@@ -91,7 +91,7 @@ Mobile-O consists of three main components:
 Mobile-O runs entirely on-device with no cloud dependency. We release the **full source code** of the iOS app along with optimized **MLX** and **CoreML** model components. The app runs smoothly on **iPhone 15 Pro**, **iPhone 16 Pro**, and **iPhone 17 Pro** ✅.
 
 <p align="center">
-  <a href="https://apps.apple.com/app/XXXXXXXXXX">
+  <a href="https://apps.apple.com/app/mobile-o/id6759238106">
     <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" width="130" alt="Download on the App Store">
   </a>
 </p>
