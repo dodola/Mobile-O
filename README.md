@@ -29,7 +29,8 @@
 
 ## 📣 Announcement
 
-
+- **Mobile-O Live Demo**: Interactively explore the model’s capabilities
+<a href="https://mobileo.cvmbzuai.com/"><img src="https://img.shields.io/badge/🚀-Live_Demo-10b981.svg" alt="Mobile-O Online Demo"></a>
 - **Mobile-O** is now fully released! This includes models, training and evaluation code, inference scripts, paper, and the complete mobile app.
 
 ---
