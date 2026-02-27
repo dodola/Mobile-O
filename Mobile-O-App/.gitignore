@@ -95,3 +95,8 @@ serviceAccountKey.json
 *.backup
 *.old
 *.orig
+onnx_models/
+.cxx/
+.gradle/
+.claude/
+checkpoints/

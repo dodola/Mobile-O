@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.MobileO" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

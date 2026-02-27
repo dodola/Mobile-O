@@ -71,8 +71,10 @@ class SEBlock(nn.Module):
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Apply forward pass."""
-        b, c, h, w = inputs.size()
-        x = F.avg_pool2d(inputs, kernel_size=[h, w])
+        c = inputs.size(1)
+        # Use adaptive_avg_pool2d instead of avg_pool2d with dynamic kernel size
+        # so the kernel size is always a constant (1x1 output) — required for ONNX export.
+        x = F.adaptive_avg_pool2d(inputs, 1)
         x = self.reduce(x)
         x = F.relu(x)
         x = self.expand(x)

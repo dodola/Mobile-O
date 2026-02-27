@@ -31,6 +31,19 @@ class MobileOForInferenceLM(Qwen2ForCausalLM, LlavaMetaForCausalLM):
 
         self.model = MobileOModel(config)
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+
+        # Patch all submodules that don't have _initialize_weights before calling
+        # post_init(). This prevents AttributeError from diffusers modules (e.g.
+        # ConvFFN from SanaTransformer2DModel) which lack this transformers-specific
+        # method. The no-op lambda is a safe stub — their weights come from their
+        # own pretrained checkpoints loaded separately.
+        def _noop_init_weights(module):
+            pass
+
+        for module in self.modules():
+            if not hasattr(module, '_initialize_weights'):
+                module._initialize_weights = _noop_init_weights
+
         # Initialize weights and apply final processing
         self.post_init()
 
