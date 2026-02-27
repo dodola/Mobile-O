@@ -70,7 +70,7 @@ On first launch:
 2. Tap **"Download Models"** — downloads run in the background with resume support
 3. After downloading, the app runs fully offline
 
-Models are downloaded from [`Amshaker/Mobile-O-0.5B-Android`](https://huggingface.co/Amshaker/Mobile-O-0.5B-Android) and stored in `filesDir/models/`.
+Models are downloaded from [`Amshaker/Mobile-O-0.5B-Android`](https://huggingface.co/Amshaker/Mobile-O-0.5B-Android) and stored in `getExternalFilesDir(null)/models/` (i.e. `/sdcard/Android/data/com.mobileo/files/models/`). Falls back to internal `filesDir` if external storage is unavailable.
 
 ---
 
@@ -105,26 +105,28 @@ cd android
 
 ### Step 2: Push Model Files
 
+The model target path is ExternalFilesDir — **no root required** for `adb push`:
+
 ```bash
 # Create directories
-adb shell mkdir -p /data/data/com.mobileo/files/models/llm
+adb shell mkdir -p /sdcard/Android/data/com.mobileo/files/models/llm
 
 # LLM (graph + sidecar weights)
-adb push onnx_models/llm.onnx       /data/data/com.mobileo/files/models/llm.onnx
-adb push onnx_models/llm.onnx.data  /data/data/com.mobileo/files/models/llm.onnx.data
+adb push onnx_models/llm.onnx       /sdcard/Android/data/com.mobileo/files/models/llm.onnx
+adb push onnx_models/llm.onnx.data  /sdcard/Android/data/com.mobileo/files/models/llm.onnx.data
 
 # DiT (graph + sidecar weights)
-adb push onnx_models/transformer.onnx       /data/data/com.mobileo/files/models/transformer.onnx
-adb push onnx_models/transformer.onnx.data  /data/data/com.mobileo/files/models/transformer.onnx.data
+adb push onnx_models/transformer.onnx       /sdcard/Android/data/com.mobileo/files/models/transformer.onnx
+adb push onnx_models/transformer.onnx.data  /sdcard/Android/data/com.mobileo/files/models/transformer.onnx.data
 
 # Single-file models
-adb push onnx_models/connector.onnx      /data/data/com.mobileo/files/models/connector.onnx
-adb push onnx_models/vae_decoder.onnx    /data/data/com.mobileo/files/models/vae_decoder.onnx
-adb push onnx_models/vision_encoder.onnx /data/data/com.mobileo/files/models/vision_encoder.onnx
+adb push onnx_models/connector.onnx      /sdcard/Android/data/com.mobileo/files/models/connector.onnx
+adb push onnx_models/vae_decoder.onnx    /sdcard/Android/data/com.mobileo/files/models/vae_decoder.onnx
+adb push onnx_models/vision_encoder.onnx /sdcard/Android/data/com.mobileo/files/models/vision_encoder.onnx
 
 # Tokenizer files
 for f in onnx_models/llm/*; do
-    adb push "$f" /data/data/com.mobileo/files/models/llm/
+    adb push "$f" /sdcard/Android/data/com.mobileo/files/models/llm/
 done
 ```
 
@@ -246,8 +248,8 @@ Protobuf parsing failed.
 
 **Fix:** Make sure both files are pushed together:
 ```bash
-adb push onnx_models/llm.onnx      /data/data/com.mobileo/files/models/llm.onnx
-adb push onnx_models/llm.onnx.data /data/data/com.mobileo/files/models/llm.onnx.data
+adb push onnx_models/llm.onnx      /sdcard/Android/data/com.mobileo/files/models/llm.onnx
+adb push onnx_models/llm.onnx.data /sdcard/Android/data/com.mobileo/files/models/llm.onnx.data
 ```
 
 ### App Crashes on Model Load (OOM)

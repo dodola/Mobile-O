@@ -70,7 +70,7 @@ cd android
 2. 点击 **"Download Models"** 开始下载，支持后台运行和断点续传
 3. 下载完成后进入对话界面，之后完全离线运行
 
-模型下载自 [`Amshaker/Mobile-O-0.5B-Android`](https://huggingface.co/Amshaker/Mobile-O-0.5B-Android)，存储在 `filesDir/models/`。
+模型下载自 [`Amshaker/Mobile-O-0.5B-Android`](https://huggingface.co/Amshaker/Mobile-O-0.5B-Android)，存储在 `getExternalFilesDir(null)/models/`（即 `/sdcard/Android/data/com.mobileo/files/models/`），外部存储不可用时自动回退到内部 `filesDir`。
 
 ---
 
@@ -105,26 +105,28 @@ cd android
 
 ### 第二步：推送模型文件
 
+模型目标路径为 ExternalFilesDir，**无需 root 权限**即可通过 `adb push` 写入：
+
 ```bash
 # 创建目录
-adb shell mkdir -p /data/data/com.mobileo/files/models/llm
+adb shell mkdir -p /sdcard/Android/data/com.mobileo/files/models/llm
 
 # LLM（graph + sidecar 权重）
-adb push onnx_models/llm.onnx       /data/data/com.mobileo/files/models/llm.onnx
-adb push onnx_models/llm.onnx.data  /data/data/com.mobileo/files/models/llm.onnx.data
+adb push onnx_models/llm.onnx       /sdcard/Android/data/com.mobileo/files/models/llm.onnx
+adb push onnx_models/llm.onnx.data  /sdcard/Android/data/com.mobileo/files/models/llm.onnx.data
 
 # DiT（graph + sidecar 权重）
-adb push onnx_models/transformer.onnx       /data/data/com.mobileo/files/models/transformer.onnx
-adb push onnx_models/transformer.onnx.data  /data/data/com.mobileo/files/models/transformer.onnx.data
+adb push onnx_models/transformer.onnx       /sdcard/Android/data/com.mobileo/files/models/transformer.onnx
+adb push onnx_models/transformer.onnx.data  /sdcard/Android/data/com.mobileo/files/models/transformer.onnx.data
 
 # 单文件模型
-adb push onnx_models/connector.onnx      /data/data/com.mobileo/files/models/connector.onnx
-adb push onnx_models/vae_decoder.onnx    /data/data/com.mobileo/files/models/vae_decoder.onnx
-adb push onnx_models/vision_encoder.onnx /data/data/com.mobileo/files/models/vision_encoder.onnx
+adb push onnx_models/connector.onnx      /sdcard/Android/data/com.mobileo/files/models/connector.onnx
+adb push onnx_models/vae_decoder.onnx    /sdcard/Android/data/com.mobileo/files/models/vae_decoder.onnx
+adb push onnx_models/vision_encoder.onnx /sdcard/Android/data/com.mobileo/files/models/vision_encoder.onnx
 
 # Tokenizer 文件
 for f in onnx_models/llm/*; do
-    adb push "$f" /data/data/com.mobileo/files/models/llm/
+    adb push "$f" /sdcard/Android/data/com.mobileo/files/models/llm/
 done
 ```
 
@@ -242,8 +244,8 @@ Protobuf parsing failed.
 
 **解决：** 确认推送了完整的两个文件：
 ```bash
-adb push onnx_models/llm.onnx      /data/data/com.mobileo/files/models/llm.onnx
-adb push onnx_models/llm.onnx.data /data/data/com.mobileo/files/models/llm.onnx.data
+adb push onnx_models/llm.onnx      /sdcard/Android/data/com.mobileo/files/models/llm.onnx
+adb push onnx_models/llm.onnx.data /sdcard/Android/data/com.mobileo/files/models/llm.onnx.data
 ```
 
 ### 模型加载后 App 直接崩溃（OOM）

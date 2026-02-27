@@ -122,13 +122,30 @@ fun CameraScreen(
                                 .build()
                             imageCapture = capture
 
+                            // Select back camera, falling back to front camera if unavailable
+                            // (e.g. on emulators or devices with only a front camera).
+                            val cameraSelector = when {
+                                cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) ->
+                                    CameraSelector.DEFAULT_BACK_CAMERA
+                                cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) ->
+                                    CameraSelector.DEFAULT_FRONT_CAMERA
+                                else -> {
+                                    Log.e("CameraScreen", "No camera available on this device")
+                                    return@addListener
+                                }
+                            }
+
                             cameraProvider.unbindAll()
-                            cameraProvider.bindToLifecycle(
-                                lifecycleOwner,
-                                CameraSelector.DEFAULT_BACK_CAMERA,
-                                preview,
-                                capture
-                            )
+                            try {
+                                cameraProvider.bindToLifecycle(
+                                    lifecycleOwner,
+                                    cameraSelector,
+                                    preview,
+                                    capture
+                                )
+                            } catch (e: IllegalArgumentException) {
+                                Log.e("CameraScreen", "Failed to bind camera: ${e.message}")
+                            }
                         }, ContextCompat.getMainExecutor(ctx))
                         previewView
                     },

@@ -103,8 +103,11 @@ class ModelDownloadManager(private val context: Context) {
     // Internal state
     // ---------------------------------------------------------------------------
 
-    // Eagerly initialized — avoids lazy-delegate NPE when accessed from init block
-    val modelsDirectory: File = File(context.filesDir, "models").also { it.mkdirs() }
+    // Eagerly initialized — avoids lazy-delegate NPE when accessed from init block.
+    // Use getExternalFilesDir so files can be pushed via `adb push` without root access.
+    // Falls back to internal filesDir if external storage is unavailable.
+    val modelsDirectory: File = (context.getExternalFilesDir(null)
+        ?: context.filesDir).let { File(it, "models").also { d -> d.mkdirs() } }
 
     private val progressPrefs = context.getSharedPreferences(
         "mobileo_download_progress", Context.MODE_PRIVATE
